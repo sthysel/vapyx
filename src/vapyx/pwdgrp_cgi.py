@@ -1,4 +1,5 @@
-"""Axis Vapix user management.
+"""
+Axis Vapix user management.
 
 https://www.axis.com/vapix-library/#/subjects/t10037719/section/t10036044
 
@@ -12,6 +13,7 @@ sgrp: Colon separated existing secondary group names of the account.
     This argument sets the user access rights for the user account.
 comment: The comment field of the account.
 """
+
 import re
 
 from .api import APIItems
@@ -37,19 +39,17 @@ REGEX_STRING = re.compile(r'[A-Z0-9]+', re.IGNORECASE)
 
 class Users(APIItems):
     """Represents all users of a device."""
-
     def __init__(self, raw: str, request: str) -> None:
         super().__init__(raw, request, URL_GET, User)
 
-    def create(self, user: str, *,
-               pwd: str, sgrp: str, comment: str=None) -> None:
+    def create(self, user: str, *, pwd: str, sgrp: str, comment: str = None) -> None:
         """Create new user."""
         data = {
             'action': 'add',
             'user': user,
             'pwd': pwd,
             'grp': 'users',
-            'sgrp': sgrp
+            'sgrp': sgrp,
         }
 
         if comment:
@@ -57,13 +57,9 @@ class Users(APIItems):
 
         self._request('post', URL, data=data)
 
-    def modify(self, user: str, *,
-               pwd: str=None, sgrp: str=None, comment: str=None) -> None:
+    def modify(self, user: str, *, pwd: str = None, sgrp: str = None, comment: str = None) -> None:
         """Update user."""
-        data = {
-            'action': 'update',
-            'user': user
-        }
+        data = {'action': 'update', 'user': user}
 
         if pwd:
             data['pwd'] = pwd
@@ -78,10 +74,7 @@ class Users(APIItems):
 
     def delete(self, user: str) -> None:
         """Remove user."""
-        data = {
-            'action': 'remove',
-            'user': user
-        }
+        data = {'action': 'remove', 'user': user}
 
         self._request('post', URL, data=data)
 
@@ -94,10 +87,8 @@ class Users(APIItems):
         raw_dict = dict(group.split('=') for group in raw.splitlines())
 
         raw_users = {
-            user: {
-                group: user in REGEX_STRING.findall(raw_dict[group])
-                for group in [ADMIN, OPERATOR, VIEWER, PTZ]
-            }
+            user: {group: user in REGEX_STRING.findall(raw_dict[group])
+                   for group in [ADMIN, OPERATOR, VIEWER, PTZ]}
             for user in REGEX_STRING.findall(raw_dict['users'])
         }
 
@@ -106,7 +97,6 @@ class Users(APIItems):
 
 class User:
     """Represents a user."""
-
     def __init__(self, id: str, raw: dict, request: str) -> None:
         self.id = id
         self.raw = raw

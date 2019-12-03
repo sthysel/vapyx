@@ -1,11 +1,8 @@
 """Python library to enable Axis devices to integrate with Home Assistant."""
 
-import logging
 import re
 
-from .utils import session_request
-
-_LOGGER = logging.getLogger(__name__)
+from loguru import logger
 
 CLASS_INPUT = 'input'
 CLASS_LIGHT = 'light'
@@ -24,15 +21,12 @@ EVENT_VALUE = 'value'
 
 MESSAGE = re.compile(r'(?<=PropertyOperation)="(?P<operation>\w+)"')
 TOPIC = re.compile(r'(?<=<wsnt:Topic).*>(?P<topic>.*)(?=<\/wsnt:Topic>)')
-SOURCE = re.compile(r'(?<=<tt:Source>).*Name="(?P<source>\w+)"' +
-                    r'.*Value="(?P<source_idx>\w+)".*(?=<\/tt:Source>)')
-DATA = re.compile(r'(?<=<tt:Data>).*Name="(?P<type>\w*)"' +
-                  r'.*Value="(?P<value>\w*)".*(?=<\/tt:Data>)')
+SOURCE = re.compile(r'(?<=<tt:Source>).*Name="(?P<source>\w+)"' + r'.*Value="(?P<source_idx>\w+)".*(?=<\/tt:Source>)')
+DATA = re.compile(r'(?<=<tt:Data>).*Name="(?P<type>\w*)"' + r'.*Value="(?P<value>\w*)".*(?=<\/tt:Data>)')
 
 
 class EventManager:
     """Initialize new events and update states of existing events."""
-
     def __init__(self, signal) -> None:
         """Ready information about events."""
         self.signal = signal
@@ -70,7 +64,7 @@ class EventManager:
             event[EVENT_TYPE] = data.group(EVENT_TYPE)
             event[EVENT_VALUE] = data.group(EVENT_VALUE)
 
-        _LOGGER.debug(event)
+        logger.debug(event)
 
         return event
 
@@ -80,8 +74,7 @@ class EventManager:
         Operation initialized means new event, also happens if reconnecting.
         Operation changed updates existing events state.
         """
-        name = EVENT_NAME.format(
-            topic=event[EVENT_TOPIC], source=event.get(EVENT_SOURCE_IDX))
+        name = EVENT_NAME.format(topic=event[EVENT_TOPIC], source=event.get(EVENT_SOURCE_IDX))
 
         if event[EVENT_OPERATION] == 'Initialized' and name not in self.events:
 
@@ -91,17 +84,16 @@ class EventManager:
                     self.signal('add', name)
                     return
 
-            _LOGGER.debug('Unsupported event %s', event[EVENT_TOPIC])
+            logger.debug('Unsupported event %s', event[EVENT_TOPIC])
 
         elif event[EVENT_OPERATION] == 'Changed' and name in self.events:
             self.events[name].state = event[EVENT_VALUE]
 
             # elif operation == 'Deleted':
-            #     _LOGGER.debug("Deleted event from stream")
+            #     logger.debug("Deleted event from stream")
 
 
 class AxisBinaryEvent:
-    """"""
     BINARY = True
     TOPIC = None
     CLASS = None
@@ -151,8 +143,8 @@ class AxisBinaryEvent:
 
 
 class Audio(AxisBinaryEvent):
-    """Audio trigger event.
-
+    """
+    Audio trigger event.
     {
         'operation': 'Initialized',
         'topic': 'tns1:AudioSource/tnsaxis:TriggerLevel',
@@ -162,6 +154,7 @@ class Audio(AxisBinaryEvent):
         'value': '0'
     }
     """
+
     TOPIC = 'tns1:AudioSource/tnsaxis:TriggerLevel'
     CLASS = CLASS_SOUND
     TYPE = 'Sound'
@@ -171,8 +164,8 @@ class Audio(AxisBinaryEvent):
 
 
 class DayNight(AxisBinaryEvent):
-    """Day/Night vision trigger event.
-
+    """
+    Day/Night vision trigger event.
     {
         'operation': 'Initialized',
         'topic': 'tns1:VideoSource/tnsaxis:DayNightVision',
@@ -182,6 +175,7 @@ class DayNight(AxisBinaryEvent):
         'value': '1'
     }
     """
+
     TOPIC = 'tns1:VideoSource/tnsaxis:DayNightVision'
     CLASS = CLASS_LIGHT
     TYPE = 'DayNight'
@@ -191,8 +185,8 @@ class DayNight(AxisBinaryEvent):
 
 
 class Input(AxisBinaryEvent):
-    """Digital input event.
-
+    """
+    Digital input event.
     {
         'operation': 'Initialized',
         'topic': 'tns1:Device/tnsaxis:IO/Port',
@@ -324,9 +318,7 @@ class Vmd4(AxisBinaryEvent):
         self.id = event[EVENT_TOPIC].split('/')[-1]
 
 
-EVENT_CLASSES = (
-    Audio, DayNight, Input, Motion, Pir, Relay, SupervisedInput, Vmd3, Vmd4)
-
+EVENT_CLASSES = (Audio, DayNight, Input, Motion, Pir, Relay, SupervisedInput, Vmd3, Vmd4)
 
 # Future events
 # {

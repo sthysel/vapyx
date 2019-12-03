@@ -1,14 +1,15 @@
-"""Axis Vapix port management.
+"""
+Axis Vapix port management.
 
 https://www.axis.com/vapix-library/#/subjects/t10037719/section/t10074527
 
 I/O port API. Digital input and output ports.
 General purpose I/O service API. Extends I/O port API with support for
-    supervised I/Os and relay connectors.
+supervised I/Os and relay connectors.
 Virtual input API.
 """
-import re
 
+import re
 from urllib.parse import quote
 
 from .api import APIItems
@@ -105,7 +106,8 @@ class Port:
         return self.raw.get('Output.Active', '')
 
     def action(self, action):
-        r"""Activate or deactivate an output.
+        """
+        Activate or deactivate an output.
 
         Use the <wait> option to activate/deactivate the port for a
             limited period of time.

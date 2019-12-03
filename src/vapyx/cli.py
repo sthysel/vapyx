@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from axis import AxisDevice
+from vapyx import AxisDevice
 
 
 async def main(host:str, user:str, password:str, port:int, events:bool, params:bool):

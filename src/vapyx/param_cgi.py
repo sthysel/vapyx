@@ -1,4 +1,5 @@
-"""Axis Vapix parameter management.
+"""
+Axis Vapix parameter management.
 
 https://www.axis.com/vapix-library/#/subjects/t10037719/section/t10036014
 
@@ -23,7 +24,6 @@ PROPERTIES = 'root.Properties'
 
 class Brand:
     """Parameters describing device brand."""
-
     def update_brand(self) -> None:
         """Update brand group of parameters."""
         self.update(path=URL_GET + GROUP.format(group=BRAND))
@@ -59,7 +59,6 @@ class Brand:
 
 class Ports:
     """Parameters describing device inputs and outputs."""
-
     def update_ports(self) -> None:
         """Update port groups of parameters."""
         self.update(path=URL_GET + GROUP.format(group=INPUT))
@@ -79,16 +78,11 @@ class Ports:
     @property
     def ports(self) -> dict:
         """Create a smaller dictionary containing all ports."""
-        return {
-            param: self[param].raw
-            for param in self
-            if param.startswith(IOPORT)
-        }
+        return {param: self[param].raw for param in self if param.startswith(IOPORT)}
 
 
 class Properties:
     """Parameters describing device properties."""
-
     def update_properties(self) -> None:
         """Update properties group of parameters."""
         self.update(path=URL_GET + GROUP.format(group=PROPERTIES))
@@ -142,7 +136,6 @@ class Properties:
 
 class Params(APIItems, Brand, Ports, Properties):
     """Represents all parameters of param.cgi."""
-
     def __init__(self, raw: str, request: object) -> None:
         super().__init__(raw, request, URL_GET, Param)
 
@@ -158,7 +151,6 @@ class Params(APIItems, Brand, Ports, Properties):
 
 class Param:
     """Represents a parameter group."""
-
     def __init__(self, id: str, raw: dict, request: str) -> None:
         self.id = id
         self.raw = raw

@@ -6,10 +6,9 @@
 # https://github.com/perexg/satip-axe/blob/master/tools/multicast-rtp
 
 import asyncio
-import logging
 import socket
 
-_LOGGER = logging.getLogger(__name__)
+from loguru import logging
 
 RTSP_PORT = 554
 
@@ -56,7 +55,7 @@ class RTSPClient(asyncio.Protocol):
             if fut.exception():
                 fut.result()
         except OSError as err:
-            _LOGGER.debug('RTSP got exception %s', err)
+            logger.debug('RTSP got exception %s', err)
             self.stop()
             self.callback(SIGNAL_FAILED)
 
@@ -114,13 +113,13 @@ class RTSPClient(asyncio.Protocol):
 
         This usually happens if device isn't available on specified IP.
         """
-        _LOGGER.warning('Response timed out %s', self.session.host)
+        logger.warning('Response timed out %s', self.session.host)
         self.stop()
         self.callback(SIGNAL_FAILED)
 
     def connection_lost(self, exc):
         """Happens when device closes connection or stop() has been called."""
-        _LOGGER.debug('RTSP session lost connection')
+        logger.debug('RTSP session lost connection')
 
 
 class RTPClient(object):
@@ -170,12 +169,12 @@ class RTPClient(object):
 
             Save reference to transport for future control.
             """
-            _LOGGER.debug('Stream listener online')
+            logger.debug('Stream listener online')
             self.transport = transport
 
         def connection_lost(self, exc):
             """Signal retry if RTSP session fails to get a response."""
-            _LOGGER.debug('Stream recepient offline')
+            logger.debug('Stream recepient offline')
 
         def datagram_received(self, data, addr):
             """Signals when new data is available."""
@@ -201,7 +200,7 @@ class RTSPMethods(object):
     def message(self):
         """Return RTSP method based on sequence number from session."""
         message = self.message_methods[self.session.method]()
-        _LOGGER.debug(message)
+        logger.debug(message)
         return message
 
     def KEEP_ALIVE(self):
@@ -367,7 +366,7 @@ class RTSPSession(object):
             state = STATE_PLAYING
         else:
             state = STATE_STOPPED
-        _LOGGER.debug('RTSP session (%s) state %s', self.host, state)
+        logger.debug('RTSP session (%s) state %s', self.host, state)
         return state
 
     def update(self, response):
@@ -377,7 +376,7 @@ class RTSPSession(object):
         If device requires authentication resend previous message with auth.
         """
         data = response.splitlines()
-        _LOGGER.debug('Received data %s from %s', data, self.host)
+        logger.debug('Received data %s from %s', data, self.host)
         while data:
             line = data.pop(0)
             if 'RTSP/1.0' in line:
@@ -435,11 +434,12 @@ class RTSPSession(object):
             pass
         else:
             # If device configuration is correct we should never get here
-            _LOGGER.debug(
+            logger.debug(
                 "%s RTSP %s %s", self.host, self.status_code, self.status_text)
 
     def generate_digest(self):
-        """RFC 2617."""
+        """RFC 2617"""
+
         from hashlib import md5
         ha1 = self.username + ':' + self.realm + ':' + self.password
         HA1 = md5(ha1.encode('UTF-8')).hexdigest()

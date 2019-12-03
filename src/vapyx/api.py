@@ -1,12 +1,10 @@
-
 from pprint import pformat
 
 from loguru import logger
 
 
 class APIItems:
-    """Base class for a map of API Items."""
-
+    """map of API items"""
     def __init__(self, raw, request, path, item_cls) -> None:
         self._request = request
         self._path = path

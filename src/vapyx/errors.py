@@ -1,44 +1,56 @@
-"""Axis errors."""
+"""Axis errors"""
 
 
 class AxisException(Exception):
-    """Base error for Axis."""
+    """
+    Axis Base error
+    """
 
 
 class RequestError(AxisException):
-    """Unable to fulfill request.
-
+    """
+    Unable to fulfill request.
     Raised when device cannot be reached.
     """
 
 
 class ResponseError(AxisException):
-    """Invalid response."""
+    """
+    Invalid response
+    """
 
 
 class Unauthorized(AxisException):
-    """Username is not authorized."""
+    """
+    Username is not authorized
+    """
 
 
 class LoginRequired(AxisException):
-    """User is logged out."""
+    """
+    User is logged out
+    """
 
 
 class MethodNotAllowed(AxisException):
-    """Invalid request."""
+    """
+    Invalid request
+    """
 
 
 class NoPermission(AxisException):
-    """Users permissions are not high enough."""
+    """
+    Users permissions are not high enough
+    """
 
 
 ERRORS = {
     401: Unauthorized,
-    405: MethodNotAllowed
+    405: MethodNotAllowed,
 }
 
 
 def raise_error(error):
     type = error
     cls = ERRORS.get(type, AxisException)
-    raise cls("{}".format(type))
+    raise cls(f'{type}')

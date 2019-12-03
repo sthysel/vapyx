@@ -1,11 +1,7 @@
-"""Python library to enable Axis devices to integrate with Home Assistant."""
-
-import logging
 import requests
+from loguru import logger
 
-from .errors import raise_error, RequestError
-
-_LOGGER = logging.getLogger(__name__)
+from .errors import RequestError, raise_error
 
 
 def session_request(session, url, **kwargs):
@@ -18,17 +14,17 @@ def session_request(session, url, **kwargs):
         return response.text
 
     except requests.exceptions.HTTPError as errh:
-        _LOGGER.debug("%s, %s", response, errh)
+        logger.debug(f'{response}, {errh}')
         raise_error(response.status_code)
 
     except requests.exceptions.ConnectionError as errc:
-        _LOGGER.debug("%s", errc)
-        raise RequestError("Connection error: {}".format(errc))
+        logger.debug(f'{errc}')
+        raise RequestError(f'Connection error: {errc}')
 
     except requests.exceptions.Timeout as errt:
-        _LOGGER.debug("%s", errt)
-        raise RequestError("Timeout: {}".format(errt))
+        logger.debug(f'{errt}')
+        raise RequestError(f'Timeout: {errt}')
 
     except requests.exceptions.RequestException as err:
-        _LOGGER.debug("%s", err)
-        raise RequestError("Unknown error: {}".format(err))
+        logger.debug(f'{err}')
+        raise RequestError(f'Unknown error: {err}')
