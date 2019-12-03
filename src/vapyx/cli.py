@@ -5,7 +5,14 @@ import click
 from vapyx import AxisDevice
 
 
-async def main(host: str, user: str, password: str, port: int, events: bool, params: bool):
+async def monitor(
+    host: str,
+    user: str,
+    password: str,
+    port: int,
+    events: bool,
+    params: bool,
+):
     loop = asyncio.get_event_loop()
     device = AxisDevice(
         loop=loop,
@@ -86,4 +93,4 @@ def cli(
     params: bool,
 ):
 
-    asyncio.run(main(host=host, port=port, user=user, password=password, events=events, params=params))
+    asyncio.run(monitor(host=host, port=port, user=user, password=password, events=events, params=params))

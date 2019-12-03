@@ -1,12 +1,12 @@
-"""Test Axis user management.
+"""
+Test Axis user management.
 
-pytest --cov-report term-missing --cov=axis.pwdgrp_cgi tests/test_pwdgrp_cgi.py
+pytest --cov-report term-missing --cov=vapyx.pwdgrp_cgi tests/test_pwdgrp_cgi.py
 """
 
-import pytest
 from unittest.mock import Mock
 
-from axis.pwdgrp_cgi import SGRP_ADMIN, User, Users
+from vapyx.pwdgrp_cgi import SGRP_ADMIN, Users
 
 
 def test_users():
@@ -43,18 +43,21 @@ def test_create():
 
     users.create('joe', pwd='abcd', sgrp=SGRP_ADMIN)
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
+        'post',
+        '/axis-cgi/pwdgrp.cgi',
         data={
             'action': 'add',
             'user': 'joe',
             'pwd': 'abcd',
             'grp': 'users',
             'sgrp': 'viewer:operator:admin'
-    })
+        }
+    )
 
     users.create('joe', pwd='abcd', sgrp=SGRP_ADMIN, comment='comment')
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
+        'post',
+        '/axis-cgi/pwdgrp.cgi',
         data={
             'action': 'add',
             'user': 'joe',
@@ -62,7 +65,8 @@ def test_create():
             'grp': 'users',
             'sgrp': 'viewer:operator:admin',
             'comment': 'comment'
-    })
+        }
+    )
 
 
 def test_modify():
@@ -72,41 +76,43 @@ def test_modify():
 
     users.modify('joe', pwd='abcd')
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
-        data={
+        'post', '/axis-cgi/pwdgrp.cgi', data={
             'action': 'update',
             'user': 'joe',
             'pwd': 'abcd'
-    })
+        }
+    )
 
     users.modify('joe', sgrp=SGRP_ADMIN)
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
-        data={
+        'post', '/axis-cgi/pwdgrp.cgi', data={
             'action': 'update',
             'user': 'joe',
             'sgrp': 'viewer:operator:admin'
-    })
+        }
+    )
 
     users.modify('joe', comment='comment')
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
-        data={
+        'post', '/axis-cgi/pwdgrp.cgi', data={
             'action': 'update',
             'user': 'joe',
             'comment': 'comment'
-    })
+        }
+    )
 
     users.modify('joe', pwd='abcd', sgrp=SGRP_ADMIN, comment='comment')
     mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
+        'post',
+        '/axis-cgi/pwdgrp.cgi',
         data={
             'action': 'update',
             'user': 'joe',
             'pwd': 'abcd',
             'sgrp': 'viewer:operator:admin',
             'comment': 'comment'
-    })
+        }
+    )
 
 
 def test_delete():
@@ -115,12 +121,7 @@ def test_delete():
     users = Users(fixture, mock_request)
     users.delete('joe')
 
-    mock_request.assert_called_with(
-        'post', '/axis-cgi/pwdgrp.cgi',
-        data={
-            'action': 'remove',
-            'user': 'joe'
-    })
+    mock_request.assert_called_with('post', '/axis-cgi/pwdgrp.cgi', data={'action': 'remove', 'user': 'joe'})
 
 
 fixture = """admin="usera,wwwa,wwwaop,wwwaovp,wwwao,wwwap,wwwaov,root"

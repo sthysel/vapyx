@@ -3,11 +3,12 @@
 pytest --cov-report term-missing --cov=axis.port_cgi tests/test_port_cgi.py
 """
 
-import pytest
 from unittest.mock import Mock
 
-from axis.param_cgi import Params
-from axis.port_cgi import Port, Ports
+import pytest
+
+from vapyx.param_cgi import Params
+from vapyx.port_cgi import Port, Ports
 
 
 def test_ports():

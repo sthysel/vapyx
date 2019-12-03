@@ -1,1 +1,1 @@
-"""Tests for Axis."""
+"""Tests for vapyx"""

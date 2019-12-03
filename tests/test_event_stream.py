@@ -4,15 +4,16 @@ pytest --cov-report term-missing --cov=axis.event_stream tests/test_event_stream
 """
 
 from unittest.mock import Mock, patch
+
 import pytest
 
-from axis.event_stream import EventManager
+from vapyx.event_stream import EventManager
 
-from .event_fixtures import (
-    FIRST_MESSAGE, AUDIO_INIT, DAYNIGHT_INIT, PIR_INIT, PIR_CHANGE,
-    PORT_0_INIT, PORT_ANY_INIT, RELAY_INIT,VMD3_INIT, VMD4_ANY_INIT,
-    VMD4_ANY_CHANGE, VMD4_C1P1_INIT, VMD4_C1P1_CHANGE, VMD4_C1P2_INIT,
-    VMD4_C1P2_CHANGE)
+from .event_fixtures import (AUDIO_INIT, DAYNIGHT_INIT, FIRST_MESSAGE,
+                             PIR_CHANGE, PIR_INIT, PORT_0_INIT, PORT_ANY_INIT,
+                             RELAY_INIT, VMD3_INIT, VMD4_ANY_CHANGE,
+                             VMD4_ANY_INIT, VMD4_C1P1_CHANGE, VMD4_C1P1_INIT,
+                             VMD4_C1P2_CHANGE, VMD4_C1P2_INIT)
 
 
 @pytest.fixture

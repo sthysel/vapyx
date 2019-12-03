@@ -3,10 +3,11 @@
 pytest --cov-report term-missing --cov=axis.param_cgi tests/test_param_cgi.py
 """
 
-import pytest
 from unittest.mock import Mock, call
 
-from axis.param_cgi import BRAND, INPUT, IOPORT, OUTPUT, PROPERTIES, Params
+import pytest
+
+from vapyx.param_cgi import BRAND, INPUT, IOPORT, OUTPUT, PROPERTIES, Params
 
 
 def test_params():

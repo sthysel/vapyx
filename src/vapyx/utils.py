@@ -8,23 +8,17 @@ def session_request(session, url, **kwargs):
     """Do HTTP/S request and return response as a string."""
     try:
         response = session(url, **kwargs)
-
         response.raise_for_status()
-
         return response.text
-
-    except requests.exceptions.HTTPError as errh:
-        logger.debug(f'{response}, {errh}')
+    except requests.exceptions.HTTPError as e:
+        logger.debug(f'{response}, {e}')
         raise_error(response.status_code)
-
-    except requests.exceptions.ConnectionError as errc:
-        logger.debug(f'{errc}')
-        raise RequestError(f'Connection error: {errc}')
-
-    except requests.exceptions.Timeout as errt:
-        logger.debug(f'{errt}')
-        raise RequestError(f'Timeout: {errt}')
-
-    except requests.exceptions.RequestException as err:
-        logger.debug(f'{err}')
-        raise RequestError(f'Unknown error: {err}')
+    except requests.exceptions.ConnectionError as e:
+        logger.debug(e)
+        raise RequestError(f'Connection error: {e}')
+    except requests.exceptions.Timeout as e:
+        logger.debug(e)
+        raise RequestError(f'Timeout: {e}')
+    except requests.exceptions.RequestException as e:
+        logger.debug(e)
+        raise RequestError(f'Unknown error: {e}')

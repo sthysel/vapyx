@@ -1,12 +1,12 @@
-"""Test Vapix network API main class.
+"""
+Test Vapix network API main class.
 
-pytest --cov-report term-missing --cov=axis.vapix tests/test_vapix.py
+pytest --cov-report term-missing --cov=vapyx.vapix tests/test_vapix.py
 """
 
-import pytest
 from unittest.mock import Mock, patch
 
-from axis.vapix import Vapix
+from vapyx.vapix import Vapix
 
 
 def test_initialize_params():
@@ -16,12 +16,11 @@ def test_initialize_params():
     mock_config.url = 'mock_url'
     mock_config.session.get = 'mock_get'
 
-    with patch('axis.vapix.session_request', return_value='key=value') as mock_request:
+    with patch('vapyx.vapix.session_request', return_value='key=value') as mock_request:
         vapix = Vapix(mock_config)
         vapix.initialize_params()
 
-    mock_request.assert_called_with(
-        'mock_get', 'mock_url/axis-cgi/param.cgi?action=list')
+    mock_request.assert_called_with('mock_get', 'mock_url/axis-cgi/param.cgi?action=list')
     assert vapix.params['key'].raw == 'value'
 
 
@@ -30,7 +29,7 @@ def test_initialize_params_no_data():
     mock_config = Mock()
     mock_config.host = 'mock_host'
 
-    with patch('axis.vapix.session_request', return_value='key=value') as mock_request:
+    with patch('vapyx.vapix.session_request', return_value='key=value') as mock_request:
         vapix = Vapix(mock_config)
         vapix.initialize_params(preload_data=False)
 
@@ -44,16 +43,17 @@ def test_initialize_ports():
     mock_config.url = 'mock_url'
     mock_config.session.get = 'mock_get'
 
-    with patch('axis.vapix.session_request',
-               return_value="""root.IOPort.I0.Direction=input
+    with patch(
+        'vapyx.vapix.session_request', return_value="""root.IOPort.I0.Direction=input
 root.IOPort.I0.Usage=Button
-""") as mock_request:
+""",
+    ) as mock_request:
         vapix = Vapix(mock_config)
         vapix.initialize_ports()
 
-    mock_request.assert_called_with(
-        'mock_get', 'mock_url/axis-cgi/param.cgi?action=list&group=root.Output')
+    mock_request.assert_called_with('mock_get', 'mock_url/axis-cgi/param.cgi?action=list&group=root.Output')
     assert vapix.ports['0'].direction == 'input'
+
 
 def test_initialize_users():
     """Verify that you can list parameters."""
@@ -62,15 +62,17 @@ def test_initialize_users():
     mock_config.url = 'mock_url'
     mock_config.session.get = 'mock_get'
 
-    with patch('axis.vapix.session_request', return_value="""users="userv"
+    with patch(
+        'vapyx.vapix.session_request',
+        return_value="""users="userv"
 viewer="userv"
 operator="usera"
 admin="usera"
 ptz=
-""") as mock_request:
+"""
+    ) as mock_request:
         vapix = Vapix(mock_config)
         vapix.initialize_users()
 
-    mock_request.assert_called_with(
-        'mock_get', 'mock_url/axis-cgi/pwdgrp.cgi?action=get')
+    mock_request.assert_called_with('mock_get', 'mock_url/axis-cgi/pwdgrp.cgi?action=get')
     assert vapix.users['userv'].viewer
