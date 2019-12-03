@@ -1,14 +1,11 @@
-"""Python library to enable Axis devices to integrate with Home Assistant."""
-
 from loguru import logger
 
 from .rtsp import (SIGNAL_DATA, SIGNAL_FAILED, SIGNAL_PLAYING, STATE_STOPPED,
                    RTSPClient)
 
-RTSP_URL = 'rtsp://{host}/axis-media/media.amp' \
-           '?video={video}&audio={audio}&event={event}'
+RTSP_URL = 'rtsp://{host}/axis-media/media.amp?video={video}&audio={audio}&event={event}'
 
-RETRY_TIMER = 15
+RETRY_TIMER = 5
 
 
 class StreamManager(object):
@@ -24,9 +21,12 @@ class StreamManager(object):
 
     @property
     def stream_url(self):
-        """Build url for stream."""
+        """Build url for stream"""
         rtsp_url = RTSP_URL.format(
-            host=self.config.host, video=self.video_query, audio=self.audio_query, event=self.event_query
+            host=self.config.host,
+            video=self.video_query,
+            audio=self.audio_query,
+            event=self.event_query,
         )
         logger.debug(rtsp_url)
         return rtsp_url
@@ -47,8 +47,8 @@ class StreamManager(object):
         return 'on' if bool(self.event) else 'off'
 
     def session_callback(self, signal):
-        """Signalling from stream session.
-
+        """
+        Signalling from stream session.
         Data - new data available for processing.
         Playing - Connection is healthy.
         Retry - if there is no connection to device.
@@ -59,31 +59,34 @@ class StreamManager(object):
         elif signal == SIGNAL_FAILED:
             self.retry()
 
-        if signal in [SIGNAL_PLAYING, SIGNAL_FAILED] and \
-                self.connection_status_callback:
+        if signal in [SIGNAL_PLAYING, SIGNAL_FAILED] and self.connection_status_callback:
             self.connection_status_callback(signal)
 
     @property
     def data(self):
-        """Get stream data."""
+        """Get stream data"""
         return self.stream.rtp.data
 
     def start(self):
         """Start stream."""
         if not self.stream or self.stream.session.state == STATE_STOPPED:
             self.stream = RTSPClient(
-                self.config.loop, self.stream_url, self.config.host, self.config.username, self.config.password,
-                self.session_callback
+                self.config.loop,
+                self.stream_url,
+                self.config.host,
+                self.config.username,
+                self.config.password,
+                self.session_callback,
             )
             self.stream.start()
 
     def stop(self):
-        """Stop stream."""
+        """Stop stream"""
         if self.stream and self.stream.session.state != STATE_STOPPED:
             self.stream.stop()
 
     def retry(self):
-        """No connection to device, retry connection after 15 seconds."""
+        """No connection to device, retry connection after RETRY_TIMER seconds"""
         self.stream = None
         self.config.loop.call_later(RETRY_TIMER, self.start)
         logger.debug(f'Reconnecting to {self.config.host}')

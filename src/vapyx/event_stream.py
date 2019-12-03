@@ -1,4 +1,3 @@
-"""Python library to enable Axis devices to integrate with Home Assistant."""
 
 import re
 
@@ -40,10 +39,15 @@ class EventManager:
             self.manage_event(event)
 
     def parse_event_xml(self, event_data) -> dict:
-        """Parse metadata xml."""
+        """Parse metadata xml"""
         event = {}
 
-        event_xml = event_data.decode()
+        try:
+            event_xml = event_data.decode('utf-8')
+        except UnicodeDecodeError as e:
+            logger.error(e)
+            logger.debug(event_data)
+            return {}
 
         message = MESSAGE.search(event_xml)
         if not message:
@@ -140,7 +144,6 @@ class AxisBinaryEvent:
 #     'type': 'state',
 #     'value': 'OFF'
 # }
-
 
 class Audio(AxisBinaryEvent):
     """

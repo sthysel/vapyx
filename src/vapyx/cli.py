@@ -1,24 +1,27 @@
-import argparse
 import asyncio
-import logging
-import sys
 
 import click
 
 from vapyx import AxisDevice
 
 
-async def main(host:str, user:str, password:str, port:int, events:bool, params:bool):
+async def main(host: str, user: str, password: str, port: int, events: bool, params: bool):
     loop = asyncio.get_event_loop()
-    device = AxisDevice(loop=loop, host=host, username=user, password=password, port=port)
+    device = AxisDevice(
+        loop=loop,
+        host=host,
+        username=user,
+        password=password,
+        port=port,
+    )
 
     if params:
         await loop.run_in_executor(None, device.vapix.initialize_params)
     await loop.run_in_executor(None, device.vapix.initialize_ports)
     await loop.run_in_executor(None, device.vapix.initialize_users)
 
-
     if events:
+
         def event_handler(action, event):
             print(action, event)
 
