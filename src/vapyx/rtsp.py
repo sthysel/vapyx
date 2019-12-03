@@ -8,7 +8,7 @@
 import asyncio
 import socket
 
-from loguru import logging
+from loguru import logger
 
 RTSP_PORT = 554
 
