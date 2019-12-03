@@ -1,1 +1,3 @@
-Python project to set up a connection towards Axis Communications devices and to subscribe to specific events on the metadatastream.
+# Vapyx (Version 0.0.1)
+
+Manage Axis video camera devices
