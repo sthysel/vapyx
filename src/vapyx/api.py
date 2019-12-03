@@ -1,8 +1,7 @@
-import logging
 
 from pprint import pformat
 
-LOGGER = logging.getLogger(__name__)
+from loguru import logger
 
 
 class APIItems:
@@ -14,7 +13,7 @@ class APIItems:
         self._item_cls = item_cls
         self._items = {}
         self.process_raw(raw)
-        LOGGER.debug(pformat(raw))
+        logger.debug(pformat(raw))
 
     def update(self, path=None) -> None:
         path = path or self._path
